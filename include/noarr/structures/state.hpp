@@ -33,12 +33,20 @@ namespace helpers {
 		static constexpr std::size_t value = 0;
 	};
 
-	template<class Tag, class HeadStateItem, class... TailStateItems>
-	struct state_index_of<Tag, HeadStateItem, TailStateItems...> {
-		using recursion = state_index_of<Tag, TailStateItems...>;
-		static constexpr bool present = recursion::present;
-		static constexpr std::size_t value = 1 + recursion::value;
+	template<class Recursion, bool Present = false>
+	struct state_index_of_rec {
+		static constexpr bool present = false;
 	};
+
+	template<class Recursion>
+	struct state_index_of_rec<Recursion, true> {
+		static constexpr bool present = true;
+		static constexpr std::size_t value = 1 + Recursion::value;
+	};
+
+	template<class Tag, class HeadStateItem, class... TailStateItems>
+	struct state_index_of<Tag, HeadStateItem, TailStateItems...>
+		: state_index_of_rec<state_index_of<Tag, TailStateItems...>, state_index_of<Tag, TailStateItems...>::present> {};
 
 	template<class Tag>
 	struct state_index_of<Tag> {
