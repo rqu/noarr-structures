@@ -26,9 +26,9 @@ struct zc_merged_len { using type = dynamic_arg_length; };
 template<std::size_t L0, std::size_t L1>
 struct zc_merged_len<static_arg_length<L0>, static_arg_length<L1>> { using type = static_arg_length<L0 * L1>; };
 
-template<std::size_t... I, class F>
-constexpr auto zc_static_for(std::index_sequence<I...>, F f) noexcept {
-	return (1 * ... * f(std::integral_constant<std::size_t, I>()));
+template<class T, T... I, class F>
+constexpr auto zc_static_for(std::integer_sequence<T, I...>, F &&f) noexcept {
+	return (T(1) * ... * std::forward<F>(f)(std::integral_constant<T, I>()));
 }
 
 template<std::size_t Levels, class... SizeTs>
@@ -37,27 +37,36 @@ constexpr std::tuple<SizeTs...> zc_general(std::size_t z, SizeTs... sizes) noexc
 	using EachDim = std::index_sequence_for<SizeTs...>;
 	std::tuple<SizeTs...> size = {sizes...};
 	std::tuple<SizeTs...> result = {SizeTs(0)...};
+
 	zc_static_for(std::make_index_sequence<Levels>(), [&](auto k) {
-		constexpr std::size_t level = Levels - k - 1;
+		constexpr std::size_t level = Levels - k - 1U;
+
 		zc_static_for(EachDim(), [&](auto i) {
-			std::size_t small_tile_size = (std::size_t) 1 << level;
+			std::size_t small_tile_size = (std::size_t)1 << level;
+
 			std::size_t facet = zc_static_for(EachDim(), [&](auto j) {
-				if constexpr(j == i) {
-					return 1;
+				if constexpr (j == i) {
+					return (std::size_t)1U;
 				} else {
 					std::size_t tile_size = small_tile_size;
-					if constexpr(j > i)
+
+					if constexpr (j > i)
 						tile_size *= 2;
+
 					return (std::get<j>(size) & -tile_size) == std::get<j>(result) ? (std::get<j>(size)-1 & tile_size-1) + 1 : tile_size;
 				}
 			});
+
 			std::size_t half_volume = facet << level;
-			if(z >= half_volume) {
+
+			if (z >= half_volume) {
 				z -= half_volume;
 				std::get<i>(result) += small_tile_size;
 			}
-			return 0;
+
+			return (std::size_t)0U;
 		});
+
 		return 0;
 	});
 	return std::tuple<SizeTs...>(result); // force copy, so that `result` is not aliased due to copy elision
