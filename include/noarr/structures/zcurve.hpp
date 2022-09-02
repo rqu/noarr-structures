@@ -39,18 +39,22 @@ constexpr std::tuple<SizeTs...> zc_general(std::size_t z, SizeTs... sizes) noexc
 	std::tuple<SizeTs...> result = {SizeTs(0)...};
 
 	zc_static_for(std::make_index_sequence<Levels>(), [&](auto k) {
-		constexpr std::size_t level = Levels - k - 1U;
+		using level = std::integral_constant<std::size_t, Levels - k - 1U>;
 
 		zc_static_for(EachDim(), [&](auto i) {
-			constexpr std::size_t small_tile_size = (std::size_t)1 << level;
+			using small_tile_size =
+				std::integral_constant<std::size_t, ((std::size_t)1 << level())>;
 
 			std::size_t facet = zc_static_for(EachDim(), [&](auto j) {
-				if constexpr (j == i) {
+				using I = std::remove_reference_t<decltype(i)>;
+				using J = std::remove_reference_t<decltype(j)>;
+
+				if constexpr (J() == I()) {
 					return (std::size_t)1U;
 				} else {
-					constexpr std::size_t tile_size = (j > i)
-						? small_tile_size * 2
-						: small_tile_size;
+					constexpr std::size_t tile_size = (J() > I())
+						? small_tile_size() * 2
+						: small_tile_size();
 
 					return ((std::get<j>(size) & -tile_size) == std::get<j>(result))
 						? (std::get<j>(size)-1 & tile_size-1) + 1
@@ -58,11 +62,11 @@ constexpr std::tuple<SizeTs...> zc_general(std::size_t z, SizeTs... sizes) noexc
 				}
 			});
 
-			std::size_t half_volume = facet << level;
+			std::size_t half_volume = facet << level();
 
 			if (z >= half_volume) {
 				z -= half_volume;
-				std::get<i>(result) += small_tile_size;
+				std::get<i>(result) += small_tile_size();
 			}
 
 			return (std::size_t)0U;
