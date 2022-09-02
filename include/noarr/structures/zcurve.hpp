@@ -39,34 +39,31 @@ constexpr std::tuple<SizeTs...> zc_general(std::size_t z, SizeTs... sizes) noexc
 	std::tuple<SizeTs...> result = {SizeTs(0)...};
 
 	zc_static_for(std::make_index_sequence<Levels>(), [&](auto k) {
-		using level = std::integral_constant<std::size_t, Levels - k - 1U>;
+		using level = std::integral_constant<std::size_t, Levels - k.value - 1U>;
 
 		zc_static_for(EachDim(), [&](auto i) {
 			using small_tile_size =
-				std::integral_constant<std::size_t, ((std::size_t)1 << level())>;
+				std::integral_constant<std::size_t, ((std::size_t)1 << level::value)>;
 
 			std::size_t facet = zc_static_for(EachDim(), [&](auto j) {
-				using I = std::remove_reference_t<decltype(i)>;
-				using J = std::remove_reference_t<decltype(j)>;
-
-				if constexpr (J() == I()) {
+				if constexpr (j.value == i.value) {
 					return (std::size_t)1U;
 				} else {
-					constexpr std::size_t tile_size = (J() > I())
-						? small_tile_size() * 2
-						: small_tile_size();
+					constexpr std::size_t tile_size = (j.value > i.value)
+						? small_tile_size::value * 2
+						: small_tile_size::value;
 
-					return ((std::get<j>(size) & -tile_size) == std::get<j>(result))
+					return ((std::get<j>(size) & std::size_t(0)-tile_size) == std::get<j>(result))
 						? (std::get<j>(size)-1 & tile_size-1) + 1
 						: tile_size;
 				}
 			});
 
-			std::size_t half_volume = facet << level();
+			std::size_t half_volume = facet << level::value;
 
 			if (z >= half_volume) {
 				z -= half_volume;
-				std::get<i>(result) += small_tile_size();
+				std::get<i>(result) += small_tile_size::value;
 			}
 
 			return (std::size_t)0U;
@@ -91,7 +88,7 @@ struct zc_special_helper<Period, RepBits, std::enable_if_t<Period >= sizeof RepB
 
 template<int NDim, int... I>
 constexpr std::size_t zc_special_inner(std::size_t tmp, std::integer_sequence<int, I...>) noexcept {
-	(..., (tmp &= zc_special_helper<(NDim << I), ((std::size_t) 1 << (1 << I))-1>::rep_bits, tmp |= tmp >> (NDim-1 << I)));
+	(..., (tmp &= zc_special_helper<(NDim << I), ((std::size_t) 1 << (1 << I))-1>::rep_bits, tmp |= tmp >> ((NDim-1) << I)));
 	return tmp & ((std::size_t) 1 << (1 << sizeof...(I)))-1;
 }
 
