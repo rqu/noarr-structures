@@ -71,13 +71,13 @@ TEST_CASE("Traverser trivial", "[traverser]") {
 		REQUIRE(get_index<'y'>(sb) == sb.template get<index_in<'y'>>());
 		REQUIRE(get_index<'z'>(sc) == sc.template get<index_in<'z'>>());
 
-		int j =
+		auto j =
 			+ sc.template get<index_in<'z'>>() * 30 * 20
 			+ sa.template get<index_in<'x'>>() * 30
 			+ sb.template get<index_in<'y'>>()
 		;
 
-		REQUIRE(i == j);
+		REQUIRE(i == (int)j);
 
 		i++;
 	});
@@ -142,13 +142,13 @@ TEST_CASE("Traverser ordered", "[traverser]") {
 		REQUIRE(sb.template get<index_in<'y'>>() < 30);
 		REQUIRE(sc.template get<index_in<'z'>>() < 40);
 
-		int j =
+		auto j =
 			+ sa.template get<index_in<'x'>>() * 30 * 40
 			+ sb.template get<index_in<'y'>>() * 40
 			+ sc.template get<index_in<'z'>>()
 		;
 
-		REQUIRE(i == j);
+		REQUIRE(i == (int)j);
 
 		i++;
 	});
@@ -213,13 +213,13 @@ TEST_CASE("Traverser ordered renamed", "[traverser]") {
 		REQUIRE(sb.template get<index_in<'y'>>() < 30);
 		REQUIRE(sc.template get<index_in<'z'>>() < 40);
 
-		int j =
+		auto j =
 			+ sa.template get<index_in<'x'>>() * 30 * 40
 			+ sb.template get<index_in<'y'>>() * 40
 			+ sc.template get<index_in<'z'>>()
 		;
 
-		REQUIRE(i == j);
+		REQUIRE(i == (int)j);
 
 		i++;
 	});
