@@ -4,8 +4,8 @@ Include(FetchContent)
 # set the project name
 project(Noarr VERSION 0.17.0)
 
-# specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF) # we do not want to allow extensions
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # download testing library Catch2
@@ -19,17 +19,27 @@ FetchContent_MakeAvailable(Catch2)
 file(GLOB_RECURSE tests_source_files CONFIGURE_DEPENDS
     "tests/*_test.hpp"
     "tests/*_test.cpp"
+    "tests/*_test.cu"
 )
 add_executable(test-runner tests/main_test.cpp ${tests_source_files})
-target_include_directories(test-runner PUBLIC include)
-target_link_libraries(test-runner PRIVATE Catch2::Catch2)
 
 # ask compiler to print maximum warnings
-if(MSVC)
-  target_compile_options(test-runner PRIVATE /W4)
+if(CMAKE_CXX_COMPILER MATCHES ".*/nvcc")
+  project(Noarr LANGUAGES CXX CUDA)
+
+  target_compile_options(test-runner PRIVATE -Xcompiler -Wall,-Wextra,-pedantic)
 else()
-  target_compile_options(test-runner PRIVATE -Wall -Wextra -pedantic)
+  project(Noarr LANGUAGES CXX)
+
+  if(MSVC)
+    target_compile_options(test-runner PRIVATE /W4)
+  else()
+    target_compile_options(test-runner PRIVATE -Wall -Wextra -pedantic)
+  endif()
 endif()
+
+target_include_directories(test-runner PUBLIC include)
+target_link_libraries(test-runner PRIVATE Catch2::Catch2)
 
 # setup CTest integration
 # DISABLED: because 1. it spits out test name warnings, 2. nobody uses it anyways

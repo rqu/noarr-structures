@@ -1,7 +1,9 @@
 #include <catch2/catch.hpp>
 
 #include <noarr/structures_extended.hpp>
+#ifndef DO_NOT_USE_CUDA_DUMMY
 #include "noarr_test_cuda_dummy.hpp"
+#endif
 #include <noarr/structures/interop/cuda.hpp>
 
 TEST_CASE("Cuda traverser simple 6D", "[cuda]") {
@@ -23,7 +25,8 @@ TEST_CASE("Cuda traverser simple 6D", "[cuda]") {
 	REQUIRE(53 == t.block_dim().y);
 	REQUIRE(79 == t.grid_dim().z);
 	REQUIRE(97 == t.block_dim().z);
-	
+
+#ifndef DO_NOT_USE_CUDA_DUMMY
 	blockIdx = {10, 30, 50};
 	threadIdx = {20, 40, 60};
 
@@ -39,6 +42,9 @@ TEST_CASE("Cuda traverser simple 6D", "[cuda]") {
 		g++;
 	});
 	REQUIRE(g == 3);
+#else
+	// TODO: call a cuda kernel
+#endif
 }
 
 TEST_CASE("Cuda traverser simple 2D", "[cuda]") {
@@ -56,7 +62,8 @@ TEST_CASE("Cuda traverser simple 2D", "[cuda]") {
 	REQUIRE(1 == t.block_dim().y);
 	REQUIRE(1 == t.grid_dim().z);
 	REQUIRE(1 == t.block_dim().z);
-	
+
+#ifndef DO_NOT_USE_CUDA_DUMMY
 	blockIdx = {10};
 	threadIdx = {20};
 
@@ -68,6 +75,9 @@ TEST_CASE("Cuda traverser simple 2D", "[cuda]") {
 		g++;
 	});
 	REQUIRE(g == 3);
+#else
+	// TODO: call a cuda kernel
+#endif
 }
 
 TEST_CASE("Cuda traverser confusing 2D", "[cuda]") {
@@ -85,7 +95,8 @@ TEST_CASE("Cuda traverser confusing 2D", "[cuda]") {
 	REQUIRE(1 == t.block_dim().y);
 	REQUIRE(1 == t.grid_dim().z);
 	REQUIRE(1 == t.block_dim().z);
-	
+
+#ifndef DO_NOT_USE_CUDA_DUMMY
 	blockIdx = {10};
 	threadIdx = {20};
 
@@ -97,6 +108,9 @@ TEST_CASE("Cuda traverser confusing 2D", "[cuda]") {
 		g++;
 	});
 	REQUIRE(g == 3);
+#else
+	// TODO: call a cuda kernel
+#endif
 }
 
 TEST_CASE("Cuda blocks", "[cuda]") {
@@ -117,7 +131,8 @@ TEST_CASE("Cuda blocks", "[cuda]") {
 	REQUIRE(8 == t.block_dim().y);
 	REQUIRE(1 == t.grid_dim().z);
 	REQUIRE(1 == t.block_dim().z);
-	
+
+#ifndef DO_NOT_USE_CUDA_DUMMY
 	blockIdx = {10, 20};
 	threadIdx = {3, 5};
 
@@ -129,4 +144,7 @@ TEST_CASE("Cuda blocks", "[cuda]") {
 		c++;
 	});
 	REQUIRE(c == 3);
+#else
+	// TODO: call a cuda kernel
+#endif
 }
