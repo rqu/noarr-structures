@@ -1,6 +1,6 @@
-[![Ubuntu-22.04](../../actions/workflows/noarr_test_ubuntu_22.yml/badge.svg)](../../actions/workflows/noarr_test_ubuntu_22.yml) [![Ubuntu-24.04](../../actions/workflows/noarr_test_ubuntu_24.yml/badge.svg)](../../actions/workflows/noarr_test_ubuntu_24.yml) [![Windows-latest](../../actions/workflows/noarr_test_winl.yml/badge.svg)](../../actions/workflows/noarr_test_winl.yml) [![macOS-14](../../actions/workflows/noarr_test_macos_14.yml/badge.svg)](../../actions/workflows/noarr_test_macos_14.yml)
+[![Ubuntu-22.04](../../actions/workflows/noarr_test_ubuntu_22.yml/badge.svg)](../../actions/workflows/noarr_test_ubuntu_22.yml) [![Ubuntu-24.04](../../actions/workflows/noarr_test_ubuntu_24.yml/badge.svg)](../../actions/workflows/noarr_test_ubuntu_24.yml) [![macOS-14](../../actions/workflows/noarr_test_macos_14.yml/badge.svg)](../../actions/workflows/noarr_test_macos_14.yml)
 
-> GCC 10-14, Clang 13-18, and MSVC 17 on Ubuntu, macOS, and Windows GitHub runners.
+> GCC 10-15 and Clang 13-19 on Ubuntu and macOS GitHub runners.
 
 [![Docs check](../../actions/workflows/noarr_docs_check.yml/badge.svg)](../../actions/workflows/noarr_docs_check.yml)
 
@@ -161,8 +161,6 @@ Examples can be found at [examples/matrix](examples/matrix "matrix example").
 ### Matrix example tests  <!-- Exclude this line from linear documentation -->
 
 [![Noarr matrix example test ubuntu-22](../../actions/workflows/noarr_matrix_example_test_ubuntu_22.yml/badge.svg)](../../actions/workflows/noarr_matrix_example_test_ubuntu_22.yml) [![Noarr matrix example test ubuntu-24](../../actions/workflows/noarr_matrix_example_test_ubuntu_24.yml/badge.svg)](../../actions/workflows/noarr_matrix_example_test_ubuntu_24.yml)
-
-[![Noarr matrix example test windows-latest](../../actions/workflows/noarr_matrix_example_test_winl.yml/badge.svg)](../../actions/workflows/noarr_matrix_example_test_winl.yml)
 
 
 ## Running tests
